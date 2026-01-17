@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>YouSky - Your Private Space</title>
     <meta name="description" content="" />
-    <link rel="stylesheet" href="/css/styles-1768686532.css" />
+    <link rel="stylesheet" href="/css/styles-1768689284.css" />
     <style>
         [x-cloak] {
             display: none !important;
@@ -131,15 +131,14 @@
     >
         Search
     </button>
-    <template x-for="tag in selectedHashtags" :key="tag">
-        <button
-            @click="removeHashtag(tag)"
-            class="px-4 py-2 rounded-lg text-sm font-medium bg-violet-100 text-violet-700 hover:bg-violet-200 flex items-center gap-2"
-        >
-            <span x-text="'#' + tag"></span>
-            <span class="text-xs">×</span>
-        </button>
-    </template>
+    <button
+        x-show="selectedHashtag !== ''"
+        @click="removeHashtag(selectedHashtag)"
+        class="px-4 py-2 rounded-lg text-sm font-medium bg-violet-100 text-violet-700 hover:bg-violet-200 flex items-center gap-2"
+    >
+        <span x-text="selectedHashtag"></span>
+        <span class="text-xs">×</span>
+    </button>
 </div>
 
 <!-- Search Bar -->
@@ -469,15 +468,15 @@
     src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
 ></script>
 <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/date-fns@3.0.0/index.min.js"></script>
+<!--<script src="https://cdn.jsdelivr.net/npm/date-fns@3.0.0/index.min.js"></script>-->
 
 <script>
     document.addEventListener("alpine:init", () => {
         Alpine.store("appData", {
             selectHashtag(tag) {
                 const data = Alpine.$data(document.querySelector("[x-data]"));
-                if (data && !data.selectedHashtags.includes(tag)) {
-                    data.selectedHashtags.push(tag);
+                if (data && data.selectedHashtag !== tag) {
+                    data.selectedHashtag = tag;
                     data.view = "hashtag";
                     data.loadPosts();
                 }
@@ -494,7 +493,7 @@
             replyingTo: null,
             searchQuery: "",
             view: "timeline",
-            selectedHashtags: [],
+            selectedHashtag: "",
             threadId: null,
 
             init() {
@@ -556,13 +555,14 @@
                                     m.toLowerCase().includes(query),
                                 )),
                     );
-                } else if (this.selectedHashtags.length > 0) {
+                } else if (this.view === "hashtag") {
+                    const lowerCaseTag = this.selectedHashtag.toLowerCase();
                     filtered = filtered.filter(
-                        (p) =>
-                            p.hashtags &&
-                            this.selectedHashtags.some((tag) =>
-                                p.hashtags.includes("#" + tag),
-                            ),
+                        (post) =>
+                            post.hashtags &&
+                            post.hashtags
+                                .map((tag) => tag.toLowerCase())
+                                .includes(lowerCaseTag),
                     );
                 }
 
@@ -680,7 +680,6 @@
             },
 
             search() {
-                this.view = this.searchQuery ? "search" : "timeline";
                 this.loadPosts();
             },
 
@@ -736,7 +735,7 @@
                     /(?<!&)#([a-zA-Z0-9]\w*)/g,
                     (match, tag) => {
                         return (
-                            "<button onclick=\"Alpine.store('appData').selectHashtag('" +
+                            "<button onclick=\"Alpine.store('appData').selectHashtag('#" +
                             tag +
                             '\')" class="text-sky-500 hover:text-sky-600 hover:underline cursor-pointer">#' +
                             tag +
@@ -754,20 +753,14 @@
             },
 
             selectHashtag(tag) {
-                if (!this.selectedHashtags.includes(tag)) {
-                    this.selectedHashtags.push(tag);
-                    this.view = "hashtag";
-                    this.loadPosts();
-                }
+                this.selectedHashtag = tag;
+                this.view = "hashtag";
+                this.loadPosts();
             },
 
             removeHashtag(tag) {
-                this.selectedHashtags = this.selectedHashtags.filter(
-                    (t) => t !== tag,
-                );
-                if (this.selectedHashtags.length === 0) {
-                    this.view = "timeline";
-                }
+                this.selectedHashtag = "";
+                this.view = "timeline";
                 this.loadPosts();
             },
 
