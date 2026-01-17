@@ -1,15 +1,42 @@
 <?php extend('../templates/main.html', ['title' =>
 'Home Page']) ?>
 
+<!-- View Selector -->
+<div class="mb-4 flex gap-2 flex-wrap" x-show="!threadId">
+    <button
+        @click="view = 'timeline'; loadPosts()"
+        :class="view === 'timeline' ? 'bg-blue-700 text-white' : 'bg-white text-slate-600 border-slate-400 hover:bg-slate-50'"
+        class="border border-blue-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+    >
+        Timeline
+    </button>
+    <button
+        @click="view = 'search'; loadPosts()"
+        :class="view === 'search' ? 'bg-blue-700 text-white' : 'bg-white text-slate-600 border-slate-400 hover:bg-slate-50'"
+        class="border border-blue-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+    >
+        Search
+    </button>
+    <template x-for="tag in selectedHashtags" :key="tag">
+        <button
+            @click="removeHashtag(tag)"
+            class="px-4 py-2 rounded-lg text-sm font-medium bg-violet-100 text-violet-700 hover:bg-violet-200 flex items-center gap-2"
+        >
+            <span x-text="'#' + tag"></span>
+            <span class="text-xs">×</span>
+        </button>
+    </template>
+</div>
+
 <!-- Search Bar -->
-<div class="mb-6">
+<div x-show="view=='search'" class="mb-4">
     <div class="relative">
         <input
             type="text"
             x-model="searchQuery"
             @input="search()"
             placeholder="Search posts..."
-            class="w-full px-4 py-3 pr-10 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+            class="w-full px-4 py-3 pr-10 rounded-xl border border-slate-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
         />
         <svg
             class="w-5 h-5 text-slate-400 absolute right-3 top-3.5"
@@ -27,38 +54,10 @@
     </div>
 </div>
 
-<!-- View Selector -->
-<div class="mb-6 flex gap-2 flex-wrap" x-show="!threadId">
-    <button
-        @click="view = 'timeline'; loadPosts()"
-        :class="view === 'timeline' ? 'bg-sky-500 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'"
-        class="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-    >
-        Timeline
-    </button>
-    <button
-        @click="view = 'search'; loadPosts()"
-        :class="view === 'search' ? 'bg-sky-500 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'"
-        class="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-        x-show="searchQuery"
-    >
-        Search Results
-    </button>
-    <template x-for="tag in selectedHashtags" :key="tag">
-        <button
-            @click="removeHashtag(tag)"
-            class="px-4 py-2 rounded-lg text-sm font-medium bg-violet-100 text-violet-700 hover:bg-violet-200 flex items-center gap-2"
-        >
-            <span x-text="'#' + tag"></span>
-            <span class="text-xs">×</span>
-        </button>
-    </template>
-</div>
-
 <!-- Post Composer -->
 <div
-    class="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 sm:p-6 mb-8"
-    x-show="!threadId"
+    class="bg-white rounded-xl border border-slate-300 shadow-sm px-4 py-3 mb-8"
+    x-show="view==='timeline'"
 >
     <template x-if="replyingTo">
         <div class="mb-3 pb-3 border-b border-slate-100">
@@ -81,7 +80,7 @@
         @keydown.meta.enter.prevent="submitPost()"
         @keydown.ctrl.enter.prevent="submitPost()"
         placeholder="What's on your mind?"
-        class="w-full min-h-[120px] text-base resize-none border-0 focus:outline-none p-0 placeholder:text-slate-300"
+        class="w-full min-h-[120px] text-base border-0 focus:border-none focus:ring-0 focus:outline-none focus:shadow-none p-0 placeholder:text-slate-400"
         maxlength="550"
     ></textarea>
 
@@ -104,7 +103,7 @@
             <button
                 @click.prevent="submitPost()"
                 type="button"
-                class="bg-sky-500 text-white rounded-full px-5 py-2 text-sm font-medium shadow-sm transition-colors flex items-center gap-2 hover:bg-sky-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                class="bg-blue-700 text-white rounded-full px-5 py-2 text-sm font-medium shadow-sm transition-colors flex items-center gap-2 hover:bg-sky-600 disabled:opacity-50 disabled:cursor-not-allowed"
                 :disabled="newPost.content.trim() === '' || newPost.content.length > 500"
             >
                 <svg
@@ -150,10 +149,10 @@
 </template>
 
 <!-- Posts Feed -->
-<div class="space-y-4">
+<div class="border border-slate-200 shadow-md">
     <template x-for="post in displayPosts" :key="post.id">
         <article
-            class="bg-white rounded-2xl border border-slate-100 p-4 sm:p-5 hover:border-slate-200 transition-all group"
+            class="bg-white border-b p-4 sm:p-5 hover:border-slate-200 transition-all group"
         >
             <!-- Reply Header -->
             <template x-if="post.parent_id && !threadId">
@@ -174,14 +173,14 @@
             <div class="flex items-start justify-between gap-3">
                 <div class="flex items-center gap-3">
                     <div
-                        class="w-10 h-10 rounded-full bg-gradient-to-br from-sky-400 to-violet-500 flex items-center justify-center text-white font-semibold text-sm shadow-sm"
+                        class="w-10 h-10 rounded-full bg-blue-700 flex items-center justify-center text-white font-semibold text-sm shadow-sm"
                     >
                         M
                     </div>
                     <div>
-                        <p class="font-semibold text-slate-800 text-sm">Me</p>
+                        <p class="font-semibold text-slate-800 text-md">Me</p>
                         <p
-                            class="text-xs text-slate-400"
+                            class="text-sm text-slate-400"
                             x-text="formatDate(post.post_date)"
                         ></p>
                     </div>
@@ -253,18 +252,18 @@
 
             <!-- Content with markdown -->
             <div
-                class="mt-3 ml-13 prose prose-sm max-w-none"
+                class="mt-3 ml-13 prose prose-md max-w-none"
                 x-html="renderMarkdown(post.content)"
             ></div>
 
             <!-- Actions -->
-            <div class="mt-4 ml-13 flex items-center gap-4">
+            <div class="mt-4 ml-11 flex items-center gap-4">
                 <button
                     @click="replyTo(post)"
                     class="text-slate-400 hover:text-sky-500 hover:bg-sky-50 px-2 py-1 rounded transition-colors flex items-center gap-1.5"
                 >
                     <svg
-                        class="w-4 h-4"
+                        class="w-6 h-6"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -277,15 +276,16 @@
                         />
                     </svg>
                     <span
-                        class="text-xs"
+                        class="block text-sm"
                         x-text="getReplyCount(post.id) || ''"
+                        x-show="getReplyCount(post.id) > 0"
                     ></span>
                 </button>
 
                 <template x-if="getReplyCount(post.id) > 0 && !threadId">
                     <button
                         @click="openThread(post.id)"
-                        class="text-xs text-sky-500 hover:text-sky-600 hover:underline"
+                        class="text-sm text-blue-700 hover:underline"
                         x-text="'View thread (' + getReplyCount(post.id) + ')'"
                     ></button>
                 </template>

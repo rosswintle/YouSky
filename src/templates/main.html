@@ -2,7 +2,7 @@
 <html lang="en">
     <?php includePart('../parts/head.html', ['title' => $title]) ?>
 
-    <body class="bg-gradient-to-b from-slate-50 to-white min-h-screen">
+    <body class="min-h-screen">
         <div
             x-data="app()"
             x-init="init()"
@@ -10,9 +10,7 @@
         >
             <?php includePart('../parts/header.html'); ?>
 
-            <main
-                class="container max-w-(--breakpoint-lg) mx-auto px-8 py-8 border border-slate-200"
-            >
+            <main class="container max-w-(--breakpoint-lg) mx-auto px-8 py-8">
                 <?= $content ?>
             </main>
         </div>
