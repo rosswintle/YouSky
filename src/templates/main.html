@@ -1,17 +1,22 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+    <?php includePart('../parts/head.html', ['title' => $title]) ?>
 
-<?php includePart('../parts/head.html', ['title' => $title]) ?>
+    <body class="bg-gradient-to-b from-slate-50 to-white min-h-screen">
+        <div
+            x-data="app()"
+            x-init="init()"
+            class="max-w-2xl mx-auto px-4 py-6 sm:py-10"
+        >
+            <?php includePart('../parts/header.html'); ?>
 
+            <main
+                class="container max-w-(--breakpoint-lg) mx-auto px-8 py-8 border border-slate-200"
+            >
+                <?= $content ?>
+            </main>
+        </div>
 
-<body>
-    <?php includePart('../parts/header.html'); ?>
-
-    <main class="container max-w-(--breakpoint-lg) mx-auto px-8 py-8 border border-slate-200">
-        <?= $content ?>
-    </main>
-
-    <?php includePart('../parts/footer.html') ?>
-</body>
-
+        <?php includePart('../parts/footer.html') ?>
+    </body>
 </html>

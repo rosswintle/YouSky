@@ -1,54 +1,824 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Page</title>
-    <meta name="description" content="">
-
-    <link rel="stylesheet" href="/css/styles.css">
+    <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YouSky - Your Private Space</title>
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/styles.css" />
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+    </style>
 
     <!-- Facebook Meta Tags -->
-    <meta property="og:url" content="">
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Home Page">
-    <meta property="og:description" content="">
-    <meta property="og:image" content="">
+    <meta property="og:url" content="" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Home Page" />
+    <meta property="og:description" content="" />
+    <meta property="og:image" content="" />
 
     <!-- Twitter Meta Tags -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta property="twitter:domain" content="">
-    <meta property="twitter:url" content="">
-    <meta name="twitter:title" content="Home Page">
-    <meta name="twitter:description" content="">
-    <meta name="twitter:image" content="">
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta property="twitter:domain" content="" />
+    <meta property="twitter:url" content="" />
+    <meta name="twitter:title" content="Home Page" />
+    <meta name="twitter:description" content="" />
+    <meta name="twitter:image" content="" />
 </head>
 
-
-<body>
-    <header class="w-full px-8 py-4 bg-slate-200">
-    <nav class="flex items-left space-x-4">
-        <a href="/">Home</a>
-        <a href="/about">About</a>
-    </nav>
+    <body class="bg-gradient-to-b from-slate-50 to-white min-h-screen">
+        <div
+            x-data="app()"
+            x-init="init()"
+            class="max-w-2xl mx-auto px-4 py-6 sm:py-10"
+        >
+            <!-- Header -->
+<header class="text-center mb-8">
+    <h1
+        class="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-sky-500 to-violet-500 bg-clip-text text-transparent mb-2"
+    >
+        YouSky
+    </h1>
+    <p class="text-slate-400 text-sm">Your private space for thoughts</p>
 </header>
 
-    <main class="container max-w-(--breakpoint-lg) mx-auto px-8 py-8 border border-slate-200">
-        
+<!-- Menu -->
+<div class="fixed top-4 right-4 z-50">
+    <div class="relative" x-data="{ open: false }">
+        <button
+            @click="open = !open"
+            class="p-2 rounded-lg hover:bg-white hover:shadow-sm transition-all"
+        >
+            <svg
+                class="w-5 h-5 text-slate-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 6h16M4 12h16M4 18h16"
+                />
+            </svg>
+        </button>
 
-<h1 class="text-6xl text-center">Hello, World!</h1>
+        <div
+            x-show="open"
+            @click.away="open = false"
+            x-cloak
+            class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-slate-100 py-2"
+        >
+            <button
+                @click="exportData(); open = false"
+                class="w-full text-left px-4 py-2 text-sm hover:bg-slate-50 flex items-center gap-2"
+            >
+                <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                    />
+                </svg>
+                Export Data
+            </button>
+            <button
+                @click="$refs.importFile.click(); open = false"
+                class="w-full text-left px-4 py-2 text-sm hover:bg-slate-50 flex items-center gap-2"
+            >
+                <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+                    />
+                </svg>
+                Import Data
+            </button>
+        </div>
+        <input
+            type="file"
+            x-ref="importFile"
+            @change="importData($event)"
+            accept=".json"
+            class="hidden"
+        />
+    </div>
+</div>
 
+            <main
+                class="container max-w-(--breakpoint-lg) mx-auto px-8 py-8 border border-slate-200"
+            >
+                
+<!-- Search Bar -->
+<div class="mb-6">
+    <div class="relative">
+        <input
+            type="text"
+            x-model="searchQuery"
+            @input="search()"
+            placeholder="Search posts..."
+            class="w-full px-4 py-3 pr-10 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+        />
+        <svg
+            class="w-5 h-5 text-slate-400 absolute right-3 top-3.5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+        >
+            <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+        </svg>
+    </div>
+</div>
 
-    </main>
+<!-- View Selector -->
+<div class="mb-6 flex gap-2 flex-wrap" x-show="!threadId">
+    <button
+        @click="view = 'timeline'; loadPosts()"
+        :class="view === 'timeline' ? 'bg-sky-500 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'"
+        class="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+    >
+        Timeline
+    </button>
+    <button
+        @click="view = 'search'; loadPosts()"
+        :class="view === 'search' ? 'bg-sky-500 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'"
+        class="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+        x-show="searchQuery"
+    >
+        Search Results
+    </button>
+    <template x-for="tag in selectedHashtags" :key="tag">
+        <button
+            @click="removeHashtag(tag)"
+            class="px-4 py-2 rounded-lg text-sm font-medium bg-violet-100 text-violet-700 hover:bg-violet-200 flex items-center gap-2"
+        >
+            <span x-text="'#' + tag"></span>
+            <span class="text-xs">×</span>
+        </button>
+    </template>
+</div>
 
-    <footer class="w-full px-8 py-4 bg-slate-200">
-</footer>
+<!-- Post Composer -->
+<div
+    class="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 sm:p-6 mb-8"
+    x-show="!threadId"
+>
+    <template x-if="replyingTo">
+        <div class="mb-3 pb-3 border-b border-slate-100">
+            <p class="text-xs text-slate-400 mb-1">Replying to</p>
+            <p
+                class="text-sm text-slate-600 line-clamp-2"
+                x-text="replyingTo.content"
+            ></p>
+            <button
+                @click="replyingTo = null"
+                class="text-xs text-sky-500 mt-1"
+            >
+                Cancel
+            </button>
+        </div>
+    </template>
 
-<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <textarea
+        x-model="newPost.content"
+        @keydown.meta.enter.prevent="submitPost()"
+        @keydown.ctrl.enter.prevent="submitPost()"
+        placeholder="What's on your mind?"
+        class="w-full min-h-[120px] text-base resize-none border-0 focus:outline-none p-0 placeholder:text-slate-300"
+        maxlength="550"
+    ></textarea>
+
+    <div
+        class="flex items-center justify-between mt-4 pt-4 border-t border-slate-50"
+    >
+        <div class="flex items-center gap-2">
+            <input
+                type="datetime-local"
+                x-model="newPost.post_date"
+                class="text-xs px-2 py-1 border rounded-lg text-slate-600"
+            />
+        </div>
+        <div class="flex items-center gap-3">
+            <span
+                class="text-xs font-medium"
+                :class="newPost.content.length > 500 ? 'text-red-500' : newPost.content.length > 450 ? 'text-amber-500' : 'text-slate-300'"
+                x-text="500 - newPost.content.length"
+            ></span>
+            <button
+                @click.prevent="submitPost()"
+                type="button"
+                class="bg-sky-500 text-white rounded-full px-5 py-2 text-sm font-medium shadow-sm transition-colors flex items-center gap-2 hover:bg-sky-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                :disabled="newPost.content.trim() === '' || newPost.content.length > 500"
+            >
+                <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                    />
+                </svg>
+                Post
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Back to Timeline -->
+<template x-if="threadId">
+    <button
+        @click="threadId = null; view = 'timeline'; loadPosts()"
+        class="mb-4 text-sm text-sky-500 hover:text-sky-600 flex items-center gap-1"
+    >
+        <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+        >
+            <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 19l-7-7 7-7"
+            />
+        </svg>
+        Back to timeline
+    </button>
+</template>
+
+<!-- Posts Feed -->
+<div class="space-y-4">
+    <template x-for="post in displayPosts" :key="post.id">
+        <article
+            class="bg-white rounded-2xl border border-slate-100 p-4 sm:p-5 hover:border-slate-200 transition-all group"
+        >
+            <!-- Reply Header -->
+            <template x-if="post.parent_id && !threadId">
+                <div class="mb-3 pb-2 border-b border-slate-100">
+                    <button
+                        @click="openThread(post.parent_id)"
+                        class="text-xs text-slate-400 hover:text-sky-500 flex items-center gap-1"
+                    >
+                        <span>In reply to</span>
+                        <span
+                            class="text-slate-600 font-medium line-clamp-1"
+                            x-text="getParentContent(post.parent_id)"
+                        ></span>
+                    </button>
+                </div>
+            </template>
+
+            <div class="flex items-start justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-10 h-10 rounded-full bg-gradient-to-br from-sky-400 to-violet-500 flex items-center justify-center text-white font-semibold text-sm shadow-sm"
+                    >
+                        M
+                    </div>
+                    <div>
+                        <p class="font-semibold text-slate-800 text-sm">Me</p>
+                        <p
+                            class="text-xs text-slate-400"
+                            x-text="formatDate(post.post_date)"
+                        ></p>
+                    </div>
+                </div>
+
+                <!-- Menu -->
+                <div class="relative" x-data="{ open: false }">
+                    <button
+                        @click="open = !open"
+                        class="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-slate-100 transition-opacity"
+                    >
+                        <svg
+                            class="w-4 h-4 text-slate-400"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <circle cx="12" cy="5" r="2" />
+                            <circle cx="12" cy="12" r="2" />
+                            <circle cx="12" cy="19" r="2" />
+                        </svg>
+                    </button>
+                    <div
+                        x-show="open"
+                        @click.away="open = false"
+                        x-cloak
+                        class="absolute right-0 mt-1 w-32 bg-white rounded-lg shadow-lg border border-slate-100 py-1 z-10"
+                    >
+                        <button
+                            @click="editPost(post); open = false"
+                            class="w-full text-left px-3 py-2 text-sm hover:bg-slate-50 flex items-center gap-2"
+                        >
+                            <svg
+                                class="w-4 h-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                />
+                            </svg>
+                            Edit
+                        </button>
+                        <button
+                            @click="deletePost(post.id); open = false"
+                            class="w-full text-left px-3 py-2 text-sm hover:bg-slate-50 text-red-600 flex items-center gap-2"
+                        >
+                            <svg
+                                class="w-4 h-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                />
+                            </svg>
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content with markdown -->
+            <div
+                class="mt-3 ml-13 prose prose-sm max-w-none"
+                x-html="renderMarkdown(post.content)"
+            ></div>
+
+            <!-- Actions -->
+            <div class="mt-4 ml-13 flex items-center gap-4">
+                <button
+                    @click="replyTo(post)"
+                    class="text-slate-400 hover:text-sky-500 hover:bg-sky-50 px-2 py-1 rounded transition-colors flex items-center gap-1.5"
+                >
+                    <svg
+                        class="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                        />
+                    </svg>
+                    <span
+                        class="text-xs"
+                        x-text="getReplyCount(post.id) || ''"
+                    ></span>
+                </button>
+
+                <template x-if="getReplyCount(post.id) > 0 && !threadId">
+                    <button
+                        @click="openThread(post.id)"
+                        class="text-xs text-sky-500 hover:text-sky-600 hover:underline"
+                        x-text="'View thread (' + getReplyCount(post.id) + ')'"
+                    ></button>
+                </template>
+            </div>
+        </article>
+    </template>
+
+    <!-- Empty State -->
+    <template x-if="displayPosts.length === 0">
+        <div class="text-center py-12 text-slate-400">
+            <p
+                x-text="view === 'search' ? 'No posts found' : 'No posts yet. Start writing!'"
+            ></p>
+        </div>
+    </template>
+</div>
+
+<!-- Edit Modal -->
+<div
+    x-show="editingPost"
+    x-cloak
+    class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+    @click.self="editingPost = null"
+>
+    <div class="bg-white rounded-2xl p-6 max-w-lg w-full">
+        <h3 class="text-lg font-semibold mb-4">Edit Post</h3>
+        <template x-if="editingPost">
+            <div>
+                <textarea
+                    x-model="editingPost.content"
+                    class="w-full min-h-[120px] text-base resize-none border border-slate-200 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                    maxlength="550"
+                ></textarea>
+                <div class="flex items-center justify-between mt-4">
+                    <input
+                        type="datetime-local"
+                        x-model="editingPost.post_date"
+                        class="text-sm px-3 py-2 border rounded-lg"
+                    />
+                    <div class="flex gap-2">
+                        <button
+                            @click="editingPost = null"
+                            class="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            @click="saveEdit()"
+                            class="px-4 py-2 text-sm bg-sky-500 text-white rounded-lg hover:bg-sky-600"
+                        >
+                            Save
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
+</div>
+
+            </main>
+        </div>
+
+        <footer class="w-full px-8 py-4 bg-slate-200"></footer>
+
+<script
+    defer
+    src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+></script>
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/date-fns@3.0.0/index.min.js"></script>
+
+<script>
+    document.addEventListener("alpine:init", () => {
+        Alpine.store("appData", {
+            selectHashtag(tag) {
+                const data = Alpine.$data(document.querySelector("[x-data]"));
+                if (data && !data.selectedHashtags.includes(tag)) {
+                    data.selectedHashtags.push(tag);
+                    data.view = "hashtag";
+                    data.loadPosts();
+                }
+            },
+        });
+    });
+
+    function app() {
+        return {
+            posts: [],
+            displayPosts: [],
+            newPost: { content: "", post_date: "" },
+            editingPost: null,
+            replyingTo: null,
+            searchQuery: "",
+            view: "timeline",
+            selectedHashtags: [],
+            threadId: null,
+
+            init() {
+                this.loadFromStorage();
+                this.setDefaultDate();
+                this.loadPosts();
+            },
+
+            setDefaultDate() {
+                const now = new Date();
+                const offset = now.getTimezoneOffset() * 60000;
+                const localTime = new Date(now - offset);
+                this.newPost.post_date = localTime.toISOString().slice(0, 16);
+            },
+
+            loadFromStorage() {
+                const stored = localStorage.getItem("yousky_posts");
+                this.posts = stored ? JSON.parse(stored) : [];
+            },
+
+            saveToStorage() {
+                localStorage.setItem(
+                    "yousky_posts",
+                    JSON.stringify(this.posts),
+                );
+            },
+
+            loadPosts() {
+                let filtered = [...this.posts];
+
+                if (this.threadId) {
+                    const mainPost = this.posts.find(
+                        (p) => p.id === this.threadId,
+                    );
+                    const replies = this.posts.filter(
+                        (p) => p.parent_id === this.threadId,
+                    );
+                    filtered = mainPost
+                        ? [
+                              mainPost,
+                              ...replies.sort(
+                                  (a, b) =>
+                                      new Date(a.post_date) -
+                                      new Date(b.post_date),
+                              ),
+                          ]
+                        : [];
+                } else if (this.view === "search" && this.searchQuery) {
+                    const query = this.searchQuery.toLowerCase();
+                    filtered = filtered.filter(
+                        (p) =>
+                            p.content.toLowerCase().includes(query) ||
+                            (p.hashtags &&
+                                p.hashtags.some((h) =>
+                                    h.toLowerCase().includes(query),
+                                )) ||
+                            (p.mentions &&
+                                p.mentions.some((m) =>
+                                    m.toLowerCase().includes(query),
+                                )),
+                    );
+                } else if (this.selectedHashtags.length > 0) {
+                    filtered = filtered.filter(
+                        (p) =>
+                            p.hashtags &&
+                            this.selectedHashtags.some((tag) =>
+                                p.hashtags.includes("#" + tag),
+                            ),
+                    );
+                }
+
+                if (this.view === "timeline" || this.view === "search") {
+                    filtered = filtered.sort(
+                        (a, b) => new Date(b.post_date) - new Date(a.post_date),
+                    );
+                }
+
+                this.displayPosts = filtered;
+            },
+
+            submitPost() {
+                if (
+                    !this.newPost.content.trim() ||
+                    this.newPost.content.length > 500
+                )
+                    return;
+
+                const post = {
+                    id:
+                        Date.now().toString() +
+                        Math.random().toString(36).substr(2, 9),
+                    content: this.newPost.content.trim(),
+                    post_date: new Date(this.newPost.post_date).toISOString(),
+                    parent_id: this.replyingTo ? this.replyingTo.id : null,
+                    hashtags: this.extractHashtags(this.newPost.content),
+                    mentions: this.extractMentions(this.newPost.content),
+                    created_date: new Date().toISOString(),
+                };
+
+                this.posts.push(post);
+                this.saveToStorage();
+                this.loadPosts();
+
+                this.newPost.content = "";
+                this.setDefaultDate();
+                this.replyingTo = null;
+            },
+
+            editPost(post) {
+                this.editingPost = {
+                    ...post,
+                    post_date: new Date(post.post_date)
+                        .toISOString()
+                        .slice(0, 16),
+                };
+            },
+
+            saveEdit() {
+                if (!this.editingPost) return;
+
+                const index = this.posts.findIndex(
+                    (p) => p.id === this.editingPost.id,
+                );
+                if (index !== -1) {
+                    this.posts[index] = {
+                        ...this.editingPost,
+                        post_date: new Date(
+                            this.editingPost.post_date,
+                        ).toISOString(),
+                        hashtags: this.extractHashtags(
+                            this.editingPost.content,
+                        ),
+                        mentions: this.extractMentions(
+                            this.editingPost.content,
+                        ),
+                    };
+                    this.saveToStorage();
+                    this.loadPosts();
+                }
+                this.editingPost = null;
+            },
+
+            deletePost(id) {
+                if (!confirm("Delete this post and all its replies?")) return;
+
+                const toDelete = new Set([id]);
+                const findReplies = (parentId) => {
+                    this.posts.forEach((p) => {
+                        if (p.parent_id === parentId) {
+                            toDelete.add(p.id);
+                            findReplies(p.id);
+                        }
+                    });
+                };
+                findReplies(id);
+
+                this.posts = this.posts.filter((p) => !toDelete.has(p.id));
+                this.saveToStorage();
+                this.loadPosts();
+
+                if (this.threadId === id) {
+                    this.threadId = null;
+                    this.view = "timeline";
+                    this.loadPosts();
+                }
+            },
+
+            replyTo(post) {
+                this.replyingTo = post;
+                if (this.threadId) {
+                    this.threadId = null;
+                    this.view = "timeline";
+                    this.loadPosts();
+                }
+                window.scrollTo({ top: 0, behavior: "smooth" });
+            },
+
+            openThread(postId) {
+                this.threadId = postId;
+                this.view = "thread";
+                this.loadPosts();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+            },
+
+            search() {
+                this.view = this.searchQuery ? "search" : "timeline";
+                this.loadPosts();
+            },
+
+            extractHashtags(text) {
+                const matches = text.match(/#[a-zA-Z0-9_]+/g) || [];
+                return [...new Set(matches.map((tag) => tag.toLowerCase()))];
+            },
+
+            extractMentions(text) {
+                const matches = text.match(/@[a-zA-Z0-9_]+/g) || [];
+                return [...new Set(matches.map((m) => m.toLowerCase()))];
+            },
+
+            getReplyCount(postId) {
+                return this.posts.filter((p) => p.parent_id === postId).length;
+            },
+
+            getParentContent(parentId) {
+                const parent = this.posts.find((p) => p.id === parentId);
+                return parent
+                    ? parent.content.slice(0, 50) +
+                          (parent.content.length > 50 ? "..." : "")
+                    : "";
+            },
+
+            formatDate(dateStr) {
+                const date = new Date(dateStr);
+                const now = new Date();
+                const diff = now - date;
+                const days = diff / (1000 * 60 * 60 * 24);
+
+                if (days > 7) {
+                    return date.toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                    });
+                } else {
+                    const hours = Math.floor(diff / (1000 * 60 * 60));
+                    const minutes = Math.floor(diff / (1000 * 60));
+                    if (minutes < 60) return minutes + "m ago";
+                    if (hours < 24) return hours + "h ago";
+                    return Math.floor(days) + "d ago";
+                }
+            },
+
+            renderMarkdown(content) {
+                if (!window.marked) return content;
+                let html = marked.parse(content);
+
+                // Add hashtag and mention styling
+                html = html.replace(/#([a-zA-Z0-9_]+)/g, (match, tag) => {
+                    return (
+                        "<button onclick=\"Alpine.store('appData').selectHashtag('" +
+                        tag +
+                        '\')" class="text-sky-500 hover:text-sky-600 hover:underline cursor-pointer">#' +
+                        tag +
+                        "</button>"
+                    );
+                });
+
+                html = html.replace(
+                    /@([a-zA-Z0-9_]+)/g,
+                    '<span class="text-violet-500 font-medium">@$1</span>',
+                );
+
+                return html;
+            },
+
+            selectHashtag(tag) {
+                if (!this.selectedHashtags.includes(tag)) {
+                    this.selectedHashtags.push(tag);
+                    this.view = "hashtag";
+                    this.loadPosts();
+                }
+            },
+
+            removeHashtag(tag) {
+                this.selectedHashtags = this.selectedHashtags.filter(
+                    (t) => t !== tag,
+                );
+                if (this.selectedHashtags.length === 0) {
+                    this.view = "timeline";
+                }
+                this.loadPosts();
+            },
+
+            exportData() {
+                const data = {
+                    version: "1.0",
+                    exportDate: new Date().toISOString(),
+                    posts: this.posts,
+                };
+                const blob = new Blob([JSON.stringify(data, null, 2)], {
+                    type: "application/json",
+                });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `yousky-export-${new Date().toISOString().split("T")[0]}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+            },
+
+            importData(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        this.posts = data.posts || data;
+                        this.saveToStorage();
+                        this.loadPosts();
+                        alert("Data imported successfully!");
+                    } catch (err) {
+                        alert("Error importing data: " + err.message);
+                    }
+                };
+                reader.readAsText(file);
+                event.target.value = "";
+            },
+        };
+    }
+</script>
 
 <!-- Live watch script -->
-</body>
-
+<script id="live.js" src="/dev-js/live.js"></script>
+    </body>
 </html>
