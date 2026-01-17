@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>YouSky - Your Private Space</title>
     <meta name="description" content="" />
-    <link rel="stylesheet" href="/css/styles-1768689284.css" />
+    <link rel="stylesheet" href="/css/styles-1768692060.css" />
     <style>
         [x-cloak] {
             display: none !important;
@@ -262,7 +262,7 @@
 </template>
 
 <!-- Posts Feed -->
-<div class="border border-slate-200 shadow-md">
+<div class="border border-slate-200 shadow-md -mx-4 sm:mx-0">
     <template x-for="post in displayPosts" :key="post.id">
         <article
             class="bg-white border-b p-4 sm:p-5 hover:border-slate-200 transition-all group"
@@ -290,10 +290,11 @@
                     >
                         M
                     </div>
-                    <div>
+
+                    <div class="flex gap-1 items-center">
                         <p class="font-semibold text-slate-800 text-md">Me</p>
                         <p
-                            class="text-sm text-slate-400"
+                            class="text-xs text-slate-400"
                             x-text="formatDate(post.post_date)"
                         ></p>
                     </div>
@@ -720,9 +721,9 @@
                 } else {
                     const hours = Math.floor(diff / (1000 * 60 * 60));
                     const minutes = Math.floor(diff / (1000 * 60));
-                    if (minutes < 60) return minutes + "m ago";
-                    if (hours < 24) return hours + "h ago";
-                    return Math.floor(days) + "d ago";
+                    if (minutes < 60) return minutes + "m";
+                    if (hours < 24) return hours + "h";
+                    return Math.floor(days) + "d";
                 }
             },
 

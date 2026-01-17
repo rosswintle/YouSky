@@ -257,9 +257,9 @@
                 } else {
                     const hours = Math.floor(diff / (1000 * 60 * 60));
                     const minutes = Math.floor(diff / (1000 * 60));
-                    if (minutes < 60) return minutes + "m ago";
-                    if (hours < 24) return hours + "h ago";
-                    return Math.floor(days) + "d ago";
+                    if (minutes < 60) return minutes + "m";
+                    if (hours < 24) return hours + "h";
+                    return Math.floor(days) + "d";
                 }
             },
 

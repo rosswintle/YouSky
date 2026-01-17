@@ -148,7 +148,7 @@
 </template>
 
 <!-- Posts Feed -->
-<div class="border border-slate-200 shadow-md">
+<div class="border border-slate-200 shadow-md -mx-4 sm:mx-0">
     <template x-for="post in displayPosts" :key="post.id">
         <article
             class="bg-white border-b p-4 sm:p-5 hover:border-slate-200 transition-all group"
@@ -176,10 +176,11 @@
                     >
                         M
                     </div>
-                    <div>
+
+                    <div class="flex gap-1 items-center">
                         <p class="font-semibold text-slate-800 text-md">Me</p>
                         <p
-                            class="text-sm text-slate-400"
+                            class="text-xs text-slate-400"
                             x-text="formatDate(post.post_date)"
                         ></p>
                     </div>
