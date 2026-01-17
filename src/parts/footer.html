@@ -315,7 +315,7 @@
                 a.href = url;
                 a.download = `yousky-export-${new Date().toISOString().split("T")[0]}.json`;
                 a.click();
-                URL.revokeObjectURL(url);
+                setTimeout(() => URL.revokeObjectURL(url), 10000);
             },
 
             importData(event) {

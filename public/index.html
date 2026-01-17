@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>YouSky - Your Private Space</title>
     <meta name="description" content="" />
-    <link rel="stylesheet" href="/css/styles-1768692060.css" />
+    <link rel="stylesheet" href="/css/styles-1768693055.css" />
     <style>
         [x-cloak] {
             display: none !important;
@@ -779,7 +779,7 @@
                 a.href = url;
                 a.download = `yousky-export-${new Date().toISOString().split("T")[0]}.json`;
                 a.click();
-                URL.revokeObjectURL(url);
+                setTimeout(() => URL.revokeObjectURL(url), 10000);
             },
 
             importData(event) {
