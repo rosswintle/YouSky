@@ -8,7 +8,7 @@
     <link rel="manifest" href="manifest.json" />
     <link rel="apple-touch-icon" href="/icon-512.png" />
     <link rel="icon" href="/icon.svg" />
-    <link rel="stylesheet" href="/css/styles-1768755517.css" />
+    <link rel="stylesheet" href="/css/styles-1769265826.css" />
     <style>
         [x-cloak] {
             display: none !important;
@@ -31,8 +31,8 @@
     <meta name="twitter:image" content="" />
 </head>
 
-    <body class="min-h-screen">
-        <div x-data="yousky" class="max-w-2xl mx-auto px-4 py-6">
+    <body class="min-h-screen" x-data="yousky">
+        <div class="max-w-2xl mx-auto px-4 py-6">
             <!-- Header -->
 <header class="text-center">
     <h1 class="text-3xl sm:text-4xl font-bold text-blue-700 mb-2">YouSky</h1>
@@ -40,10 +40,31 @@
 </header>
 
 <!-- Menu -->
-<div class="fixed top-4 right-4 z-50">
-    <div class="relative" x-data="{ open: false }">
+<div class="fixed top-4 right-4 z-5">
+    <div class="relative flex" x-data="{ menuOpen: false }">
+        <!-- Help button - the help modal is included in the footer -->
         <button
-            @click="open = !open"
+            @click="helpOpen = !helpOpen"
+            class="p-2 rounded-lg hover:bg-white hover:shadow-sm transition-all"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="size-6"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"
+                />
+            </svg>
+        </button>
+
+        <button
+            @click="menuOpen = !menuOpen"
             class="p-2 rounded-lg hover:bg-white hover:shadow-sm transition-all"
         >
             <svg
@@ -62,13 +83,13 @@
         </button>
 
         <div
-            x-show="open"
-            @click.away="open = false"
+            x-show="menuOpen"
+            @click.away="menuOpen = false"
             x-cloak
             class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-slate-100 py-2"
         >
             <button
-                @click="exportData(); open = false"
+                @click="exportData(); menuOpen = false"
                 class="w-full text-left px-4 py-2 text-sm hover:bg-slate-50 flex items-center gap-2"
             >
                 <svg
@@ -87,7 +108,7 @@
                 Export Data
             </button>
             <button
-                @click="$refs.importFile.click(); open = false"
+                @click="$refs.importFile.click(); menuOpen = false"
                 class="w-full text-left px-4 py-2 text-sm hover:bg-slate-50 flex items-center gap-2"
             >
                 <svg
@@ -472,6 +493,10 @@
     defer
     src="https://cdn.jsdelivr.net/npm/@alpinejs/persist@3.x.x/dist/cdn.min.js"
 ></script>
+<script
+    defer
+    src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.x.x/dist/cdn.min.js"
+></script>
 
 <!--- Alpine Core -->
 <script
@@ -480,6 +505,108 @@
 ></script>
 
 <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+
+<div class="flex justify-center">
+    <div
+        x-show="helpOpen"
+        style="display: none"
+        x-on:keydown.escape.prevent.stop="helpOpen = false"
+        role="dialog"
+        aria-modal="true"
+        x-id="['modal-title']"
+        :aria-labelledby="$id('modal-title')"
+        class="fixed inset-0 z-10"
+    >
+        <!-- Overlay -->
+        <div
+            x-show="helpOpen"
+            x-transition.opacity
+            class="fixed inset-0 bg-black/25"
+        ></div>
+
+        <!-- Panel -->
+        <div
+            x-show="helpOpen"
+            x-transition
+            x-on:click="helpOpen = false"
+            class="relative flex h-screen items-center justify-center p-4"
+        >
+            <div
+                x-on:click.stop
+                x-trap.noscroll.inert="helpOpen"
+                class="relative min-w-96 max-w-xl max-h-full rounded-xl bg-white p-6 shadow-lg flex flex-col"
+            >
+                <!-- Content container -->
+                <div class="overflow-y-auto">
+                    <!-- Title -->
+                    <h2
+                        class="font-medium text-xl text-gray-800 mb-4"
+                        :id="$id('modal-title')"
+                    >
+                        About YouSky
+                    </h2>
+
+                    <!-- Content -->
+                    <div
+                        class="mt-2 text-gray-500 max-w-xs flex flex-col gap-3"
+                    >
+                        <p>
+                            YouSky is a personal, private journal that works
+                            like social media.
+                        </p>
+                        <p>
+                            Capture your thoughts in short social-media length
+                            posts that only you get to see.
+                        </p>
+                        <p>
+                            YouSky stores the data in your web browser. There is
+                            no "cloud" or "server". Only you, in this web
+                            broswer, on this device, can see what you post.
+                        </p>
+                        <p>
+                            You can (and it is recommended that you do) export
+                            your posts using the menu in the top-right
+                            occasionally to save them. This also allows you to
+                            move your posts to another device.
+                        </p>
+                        <p>
+                            YouSky has replies and hashtags that work mostly as
+                            you would expect. It's not finished and lacks some
+                            polish, but it works just fine today. Expect it to
+                            work a bit better in the future.
+                        </p>
+                        <p>
+                            YouSky is made by
+                            <a
+                                class="underline hover:no-underline"
+                                href="https://rw.omg.lol/"
+                                >Ross Wintle</a
+                            >
+                            in the UK. You can
+                            <a
+                                class="underline hover:nounderline"
+                                href="https://ko-fi.com/magicroundabout"
+                                >buy him a coffee</a
+                            >
+                            if you like it.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="mt-6 flex-shrink-0 flex justify-end space-x-2">
+                    <button
+                        type="button"
+                        x-on:click="helpOpen = false"
+                        class="relative flex items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-transparent bg-gray-800 px-4 py-2 text-white hover:bg-gray-900"
+                    >
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
     document.addEventListener("alpine:init", () => {
@@ -494,6 +621,9 @@
                 view: "timeline",
                 selectedHashtag: "",
                 threadId: null,
+
+                // Modal states
+                helpOpen: false,
 
                 init() {
                     this.setDefaultDate();

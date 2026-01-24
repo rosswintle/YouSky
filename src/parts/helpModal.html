@@ -1,0 +1,101 @@
+<div class="flex justify-center">
+    <div
+        x-show="helpOpen"
+        style="display: none"
+        x-on:keydown.escape.prevent.stop="helpOpen = false"
+        role="dialog"
+        aria-modal="true"
+        x-id="['modal-title']"
+        :aria-labelledby="$id('modal-title')"
+        class="fixed inset-0 z-10"
+    >
+        <!-- Overlay -->
+        <div
+            x-show="helpOpen"
+            x-transition.opacity
+            class="fixed inset-0 bg-black/25"
+        ></div>
+
+        <!-- Panel -->
+        <div
+            x-show="helpOpen"
+            x-transition
+            x-on:click="helpOpen = false"
+            class="relative flex h-screen items-center justify-center p-4"
+        >
+            <div
+                x-on:click.stop
+                x-trap.noscroll.inert="helpOpen"
+                class="relative min-w-96 max-w-xl max-h-full rounded-xl bg-white p-6 shadow-lg flex flex-col"
+            >
+                <!-- Content container -->
+                <div class="overflow-y-auto">
+                    <!-- Title -->
+                    <h2
+                        class="font-medium text-xl text-gray-800 mb-4"
+                        :id="$id('modal-title')"
+                    >
+                        About YouSky
+                    </h2>
+
+                    <!-- Content -->
+                    <div
+                        class="mt-2 text-gray-500 max-w-xs flex flex-col gap-3"
+                    >
+                        <p>
+                            YouSky is a personal, private journal that works
+                            like social media.
+                        </p>
+                        <p>
+                            Capture your thoughts in short social-media length
+                            posts that only you get to see.
+                        </p>
+                        <p>
+                            YouSky stores the data in your web browser. There is
+                            no "cloud" or "server". Only you, in this web
+                            broswer, on this device, can see what you post.
+                        </p>
+                        <p>
+                            You can (and it is recommended that you do) export
+                            your posts using the menu in the top-right
+                            occasionally to save them. This also allows you to
+                            move your posts to another device.
+                        </p>
+                        <p>
+                            YouSky has replies and hashtags that work mostly as
+                            you would expect. It's not finished and lacks some
+                            polish, but it works just fine today. Expect it to
+                            work a bit better in the future.
+                        </p>
+                        <p>
+                            YouSky is made by
+                            <a
+                                class="underline hover:no-underline"
+                                href="https://rw.omg.lol/"
+                                >Ross Wintle</a
+                            >
+                            in the UK. You can
+                            <a
+                                class="underline hover:nounderline"
+                                href="https://ko-fi.com/magicroundabout"
+                                >buy him a coffee</a
+                            >
+                            if you like it.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="mt-6 flex-shrink-0 flex justify-end space-x-2">
+                    <button
+                        type="button"
+                        x-on:click="helpOpen = false"
+                        class="relative flex items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-transparent bg-gray-800 px-4 py-2 text-white hover:bg-gray-900"
+                    >
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -5,10 +5,31 @@
 </header>
 
 <!-- Menu -->
-<div class="fixed top-4 right-4 z-50">
-    <div class="relative" x-data="{ open: false }">
+<div class="fixed top-4 right-4 z-5">
+    <div class="relative flex" x-data="{ menuOpen: false }">
+        <!-- Help button - the help modal is included in the footer -->
         <button
-            @click="open = !open"
+            @click="helpOpen = !helpOpen"
+            class="p-2 rounded-lg hover:bg-white hover:shadow-sm transition-all"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="size-6"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"
+                />
+            </svg>
+        </button>
+
+        <button
+            @click="menuOpen = !menuOpen"
             class="p-2 rounded-lg hover:bg-white hover:shadow-sm transition-all"
         >
             <svg
@@ -27,13 +48,13 @@
         </button>
 
         <div
-            x-show="open"
-            @click.away="open = false"
+            x-show="menuOpen"
+            @click.away="menuOpen = false"
             x-cloak
             class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-slate-100 py-2"
         >
             <button
-                @click="exportData(); open = false"
+                @click="exportData(); menuOpen = false"
                 class="w-full text-left px-4 py-2 text-sm hover:bg-slate-50 flex items-center gap-2"
             >
                 <svg
@@ -52,7 +73,7 @@
                 Export Data
             </button>
             <button
-                @click="$refs.importFile.click(); open = false"
+                @click="$refs.importFile.click(); menuOpen = false"
                 class="w-full text-left px-4 py-2 text-sm hover:bg-slate-50 flex items-center gap-2"
             >
                 <svg
